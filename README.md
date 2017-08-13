@@ -9,5 +9,20 @@ CAS Client 与受保护的客户端应用部署在一起，以 Filter 方式保�
 另外，CAS 协议中还提供了 Proxy （代理）模式，以适应更加高级、复杂的应用场景，具体介绍可以参考 [CAS 官方网站](https://www.apereo.org/projects/cas)上的相关文档。
 * **部署 CAS Server**  
 部署过程[参考文档](https://github.com/apereo/cas-overlay-template)  
+使用package命令打包得到cas.war，这个war包可以直接使用 **java -jar cas.war** 这个命令启动，而且还会自动加载外部配置文件（/etc/cas/这个目录）。  
+如果要修改默认的配置，只需要修改工程目录下的etc/cas/config/application.yml文件，例如要修改https证书的密码（war包里面的默认密码是changeit）则需要添加如下内容：  
+`server:
+  ssl:
+    key-store-password: "xxx"
+    key-password: "xxx"`  
+此处的xxx为实际创建证书时使用的密码，修改完成后使用copy 命令就可以将工程目录下的etc/cas/目录拷贝到/etc/cas/这个目录，然后重新启动即可。  
+服务端启动前还需要将客户端地址注册到服务端上，不然会出现服务端拒绝响应客户端的登录请求，服务注册的方式多样可以参照[官方手册](https://apereo.github.io/cas/5.1.x/index.html)，我这里使用JSON Service Registry 。  
+在cas.war包services目录下有两个默认的服务注册json文件，其中一个是允许以`https://`开头的所有服务，这个注册地址已经可以满足大部分的客户端请求了，所以不必添加新的客户端注册json文件了。  
+但是需要在工程目录下的pom.xml中添加解析json服务注册的jar包，内容如下：  
+`<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-json-service-registry</artifactId>
+    <version>${cas.version}</version>
+</dependency>`
 * **部署 CAS Client**  
 部署过程[参考文档](https://github.com/apereo/java-cas-client)
