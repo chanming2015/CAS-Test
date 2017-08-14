@@ -10,5 +10,8 @@ public interface CASConfig
 {
     String CASSERVERLOGINURL = "https://cas.server.name:8443/cas/login";
     String CASSERVERURLPREFIX = "https://cas.server.name:8443/cas";
-    String SERVERNAME = "https://cas.server.name:8443";
+    /**
+     *CAS Client URL, For CAS redirect after logined
+     */
+    String SERVERNAME = "http://cas.server.name:8080";
 }
