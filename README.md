@@ -46,4 +46,5 @@ CAS Client 与受保护的客户端应用部署在一起，以 Filter 方式保�
 第二步，导出证书`keytool -export -file etc/cas/casserver.crt -alias casserver -keystore etc/cas/thekeystore`  
 第三步，把证书导入到客户端JDK中`keytool -import -keystore /var/lib/jdk1.8/jre/lib/security/cacerts -file etc/cas/casserver.crt -alias casserver` jdk证书cacerts的默认密码是changeit
 * **部署 CAS Client**  
-部署过程[参考文档](https://github.com/apereo/java-cas-client)
+部署过程[参考文档](https://github.com/apereo/java-cas-client)  
+或者直接使用[我给的例子](https://github.com/chanming2015/CAS-Test/tree/master/cas.test)
