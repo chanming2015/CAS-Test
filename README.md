@@ -41,6 +41,9 @@ CAS Client 与受保护的客户端应用部署在一起，以 Filter 方式保�
 </dependency>`  
 然后重新打包，启动服务即可。  
 ---
-**配置https证书**
+**配置https证书**    
+第一步，生成证书`keytool -genkey -alias casserver -keypass xxx -keyalg RSA -keysize 2048 -validity 3650 -keystore etc/cas/thekeystore -storepass xxx`  
+第二步，导出证书`keytool -export -file etc/cas/casserver.crt -alias casserver -keystore etc/cas/thekeystore`  
+第三步，把证书导入到客户端JDK中`keytool -import -keystore /var/lib/jdk1.8/jre/lib/security/cacerts -file etc/cas/casserver.crt -alias casserver` jdk证书cacerts的默认密码是changeit
 * **部署 CAS Client**  
 部署过程[参考文档](https://github.com/apereo/java-cas-client)
