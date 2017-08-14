@@ -14,15 +14,31 @@ CAS Client 与受保护的客户端应用部署在一起，以 Filter 方式保�
 `server:
   ssl:
     key-store-password: "xxx"
-    key-password: "xxx"`  
-此处的xxx为实际创建证书时使用的密码，修改完成后使用copy 命令就可以将工程目录下的etc/cas/目录拷贝到/etc/cas/这个目录，然后重新启动即可。  
-服务端启动前还需要将客户端地址注册到服务端上，不然会出现服务端拒绝响应客户端的登录请求，服务注册的方式多样可以参照[官方手册](https://apereo.github.io/cas/5.1.x/index.html)，我这里使用JSON Service Registry 。  
-在cas.war包services目录下有两个默认的服务注册json文件，其中一个是允许以`https://`开头的所有服务，这个注册地址已经可以满足大部分的客户端请求了，所以不必添加新的客户端注册json文件了。  
-但是需要在工程目录下的pom.xml中添加解析json服务注册的jar包，内容如下：  
+    key-password: "xxx"`此处的xxx为实际创建证书时使用的密码。  
+服务端启动前还需要将客户端地址注册到服务端上，不然会出现服务端拒绝响应客户端的登录请求，服务注册的方式多样可以参照[官方手册](https://apereo.github.io/cas/5.1.x/index.html)，我这里使用JSON Service Registry 。需要修改**cas.properties**文件，添加如下内容：  
+`cas.serviceRegistry.config.location: file:/etc/cas/services`  
+同时还要在/etc/cas/services目录下创建json文件，添加如下内容：  
+`{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "http://cas.server.name.*",
+  "name" : "cas.server.name",
+  "id" : 1000000000000000001,
+  "evaluationOrder" : 10
+}`  
+`http://cas.server.name为cas客户端的地址前缀`  
+同时修改application.yml文件，添加如下内容：  
+`cas:
+  authn:
+    accept:
+      users: admin::admin`这一步是配置静态的登录用户名和密码  
+修改完成后使用copy 命令就可以将工程目录下的etc/cas/目录拷贝到/etc/cas/这个目录，最后需要在工程目录下的pom.xml中添加解析json服务注册的jar包，内容如下：  
 `<dependency>
     <groupId>org.apereo.cas</groupId>
     <artifactId>cas-server-support-json-service-registry</artifactId>
     <version>${cas.version}</version>
-</dependency>`
+</dependency>`  
+然后重新打包，启动服务即可。  
+---
+**配置https证书**
 * **部署 CAS Client**  
 部署过程[参考文档](https://github.com/apereo/java-cas-client)
